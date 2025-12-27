@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reversable Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #7b3fe4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #6832c7;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .green {
+            color: green;
+        }
+
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Reversable Checker</h2>
+    <input type="text" id="wordInput" placeholder="Enter a word or phrase">
+    <br>
+    <button onclick="checkReversable()">Check</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    function checkReversable() {
+        const input = document.getElementById("wordInput").value;
+        
+        // Clean the input (ignore spaces, punctuation, capitalization)
+        const cleaned = input.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const reversed = cleaned.split("").reverse().join("");
+
+        const resultDiv = document.getElementById("result");
+
+        if (cleaned && cleaned === reversed) {
+            resultDiv.textContent = `"${input}" is reversable!`;
+            resultDiv.className = "green";
+        } else {
+            resultDiv.textContent = `"${input}" is not reversable!`;
+            resultDiv.className = "red";
+        }
+    }
+</script>
+
+</body>
+</html>

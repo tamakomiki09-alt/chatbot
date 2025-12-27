@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Concierge</title>
+    <link rel="stylesheet" href="/static/new.css">
+</head>
+
+<body>
+
+    <div class="chat-container">
+        <h1>AI Concierge</h1>
+
+        <div class="chat-box" id="chatBox"></div>
+
+        <div class="input-row">
+            <input id="userInput" type="text" placeholder="Type here...">
+            <button class="send-btn" id="sendBtn">➤</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chatBox");
+        const input = document.getElementById("userInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        sendBtn.onclick = async () => {
+            const message = input.value.trim();
+            if (!message) return;
+
+            // ADD USER BUBBLE
+            chatBox.innerHTML += `<div class="user-msg">${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+
+            // ADD BOT BUBBLE
+            chatBox.innerHTML += `<div class="bot-msg">${data.reply}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            input.value = "";
+        };
+    </script>
+
+</body>
+</html>

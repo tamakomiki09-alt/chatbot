@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pink pop bestie 💗</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="page">
+    
+    <!-- Character -->
+    <div class="character">
+        <img src="{{ url_for('static', filename='popgirl.png') }}" alt="pop girl">
+    </div>
+
+    <!-- Chat -->
+    <div class="chat-container">
+        <h2>pink pop bestie 💗</h2>
+
+        <div id="chat-box"></div>
+
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="talk to me bestie..." required>
+            <button type="submit">send</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+const form = document.getElementById("chat-form");
+const input = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const message = input.value;
+    input.value = "";
+
+    chatBox.innerHTML += `<div class="user">${message}</div>`;
+
+    const response = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message})
+    });
+
+    const data = await response.json();
+    chatBox.innerHTML += `<div class="bot">${data.reply}</div>`;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+});
+</script>
+
+</body>
+</html>
