@@ -1,0 +1,76 @@
+{
+  "hotel_name": {
+    "value": "The Peninsula Tokyo",
+    "citation": "https://www.peninsulatokyo.com"
+  },
+  "address": {
+    "value": "1-8-1 Yurakucho, Chiyoda-ku Tokyo, 100-0006, Japan",
+    "citation": "https://www.peninsulatokyo.com"
+  },
+  "check_in": {
+    "value": null,
+    "citation": null
+  },
+  "check_out": {
+    "value": null,
+    "citation": null
+  },
+  "restaurants": {
+    "value": {
+      "count": 5,
+      "names": [
+        "Hei Fung Terrace",
+        "Ten-ichi",
+        "Wakon",
+        "Mon Cher Ton Ton",
+        "Afternoon Tea (The Lobby / iconic Afternoon Tea experience)"
+      ],
+      "hours": null
+    },
+    "citation": "https://www.peninsulatokyo.com"
+  },
+  "spa": {
+    "value": {
+      "name": "The Peninsula Spa & Wellness Center",
+      "location": "6/F",
+      "hours": "10:00 am - 9:30 pm Daily",
+      "thermal_suite_hours": "6:30 am - 10:00 pm Daily",
+      "key_treatments": [
+        "Luxury skincare and anti-ageing facial treatments from Margy’s MonteCarlo",
+        "Holistic treatments by Subtle Energies including therapeutic massages, revitalizing facials, detoxifying scrubs, and signature journeys"
+      ]
+    },
+    "citation": "https://www.peninsula.com/en/tokyo/wellness/luxury-hotel-spa"
+  },
+  "pool": {
+    "value": {
+      "description": "20 metre (66 foot) indoor heated swimming pool with adjoining outdoor terrace",
+      "hours": null,
+      "maintenance_closure_dates": "Closed January 19–23, 2026 for annual routine maintenance"
+    },
+    "citation": "https://www.peninsulatokyo.com"
+  },
+  "fitness_center": {
+    "value": {
+      "description": "State-of-the-art fitness center",
+      "hours": null
+    },
+    "citation": "https://www.peninsulatokyo.com"
+  },
+  "transportation": {
+    "value": null,
+    "citation": null
+  },
+  "amenities": {
+    "value": [
+      "Five distinct restaurants",
+      "Contemporary lounge bar",
+      "The Peninsula Spa & Wellness Center",
+      "State-of-the-art fitness center",
+      "20 metre indoor heated swimming pool with outdoor terrace",
+      "The Prevention Clinic Tokyo (medical examinations)",
+      "CLINIC 9ru (anti-aging and regenerative skincare treatments)"
+    ],
+    "citation": "https://www.peninsulatokyo.com"
+  }
+}

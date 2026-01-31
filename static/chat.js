@@ -1,35 +1,37 @@
-document.getElementById("send-btn").addEventListener("click", sendMessage);
-document.getElementById("user-input").addEventListener("keypress", function(e) {
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+document.getElementById("userInput").addEventListener("keypress", function (e) {
     if (e.key === "Enter") sendMessage();
 });
 
 function sendMessage() {
-    let input = document.getElementById("user-input");
-    let message = input.value.trim();
-    if (message === "") return;
+    const input = document.getElementById("userInput");
+    const text = input.value.trim();
+    if (!text) return;
 
-    addUserMessage(message);
+    addMessage(text, "user");
     input.value = "";
 
-    fetch("/ask", {
+    fetch("/chat", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({message: message})
+        body: JSON.stringify({message: text})
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-        addAIMessage(data.answer);
+        addMessage(data.reply, "ai");
+    })
+    .catch(() => {
+        addMessage("I'm sorry — I encountered an error.", "ai");
     });
 }
 
-function addUserMessage(msg) {
-    let box = document.getElementById("chat-box");
-    box.innerHTML += `<div class="user-message">${msg}</div>`;
-    box.scrollTop = box.scrollHeight;
-}
+function addMessage(msg, sender) {
+    const chatBox = document.getElementById("chatBox");
+    const bubble = document.createElement("div");
 
-function addAIMessage(msg) {
-    let box = document.getElementById("chat-box");
-    box.innerHTML += `<div class="ai-message">${msg}</div>`;
-    box.scrollTop = box.scrollHeight;
+    bubble.className = sender === "user" ? "user-bubble" : "ai-bubble";
+    bubble.textContent = msg;
+
+    chatBox.appendChild(bubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }

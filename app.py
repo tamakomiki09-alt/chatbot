@@ -1,49 +1,76 @@
-from flask import Flask, render_template, request, jsonify
-from database import save_message
-import uuid
+import os
+from flask import Flask, request, jsonify, render_template, session
+from flask_session import Session
+from openai import OpenAI
+
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
+app.secret_key = "super-secret-key"
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
-# Unique session ID per visitor (simple version)
-session_id = str(uuid.uuid4())
+# SYSTEM PROMPT — Peninsula persona
+SYSTEM_PROMPT = """
+You are the AI Concierge for The Peninsula Tokyo, a luxury 5-star hotel in Marunouchi.
 
+Your tone must be warm, elegant, concise, highly knowledgeable, and refined.
+Always speak in short, smooth Peninsula-style paragraphs.
 
-@app.route("/")
-def home():
-    return render_template("chat.html")
+STRICT RULES:
+1. You cannot place real reservations.
+2. When a guest asks to book a restaurant, spa appointment, chauffeur, or any activity:
+   - You MUST respond with: 
+     "I can guide you, and here is where you can make a reservation."
+   - Then provide the appropriate Peninsula Tokyo reservation option:
+        • Restaurants → https://www.peninsula.com/en/tokyo/hotel-fine-dining
+        • Spa → https://www.peninsula.com/en/tokyo/wellness
+        • Rooms → https://www.peninsula.com/en/tokyo/room-types
+        • General inquiries → tokyo@peninsula.com
+   - Never say a reservation has been made.
+   - Never imply confirmation.
+3. Only recommend Peninsula Tokyo services unless the guest clearly asks for outside options.
+4. If outside options are needed, choose luxury places near Marunouchi (Ginza, Hibiya, Otemachi).
+5. No markdown formatting, no lists, no asterisks, no hyphens.
+6. Always remember earlier messages in this session.
+7. Never invent services that don’t exist at The Peninsula Tokyo.
+8. Maintain a polished, discreet Peninsula-concierge tone at all times.
+"""
 
+def generate_ai_reply(user_msg):
+    try:
+        # Start session memory
+        if "messages" not in session:
+            session["messages"] = []
 
+        # Add user message
+        session["messages"].append({"role": "user", "content": user_msg})
 
-@app.route("/ask", methods=["POST"])
-def ask():
-    user_msg = request.json.get("message")
+        # Build chat history
+        conversation = [{"role": "system", "content": SYSTEM_PROMPT}] + session["messages"]
 
-    # Temporary AI response (we replace with GPT later)
-    ai_msg = "Thank you for your message! (AI response goes here)"
+        # Request to OpenAI
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=conversation,
+            temperature=0.7
+        )
 
-    # Save to database
-    save_message(
-        session_id=session_id,
-        user_msg=user_msg,
-        ai_msg=ai_msg,
-        category=None,          # will fill this in next steps
-        keywords=None,          # auto-extract later
-        interest=None,          # from user preferences
-        time_pref=None,         # from user
-        mobility=None,          # from user
-        escalated=False
-    )
+        # ✅ FIXED: new SDK requires dot notation
+        reply = response.choices[0].message.content
+        
+        # Clean unwanted characters
+        reply = reply.replace("*", "")
 
-    return jsonify({"answer": ai_msg})
+        # Save assistant reply to memory
+        session["messages"].append({"role": "assistant", "content": reply})
 
+        return reply
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)
-
-from flask import Flask, render_template, request, jsonify
-import sqlite3
-
-app = Flask(__name__)
+    except Exception as e:
+        print("🔥 ERROR:", str(e))
+        return "I'm sorry — I encountered an error."
 
 @app.route("/")
 def home():
@@ -51,13 +78,10 @@ def home():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_message = request.json["message"]
-
-    # TEMPORARY: simple response (AI comes next)
-    bot_reply = f"You said: {user_message}"
-
-    return jsonify({"reply": bot_reply})
+    data = request.get_json()
+    user_msg = data.get("message", "")
+    reply = generate_ai_reply(user_msg)
+    return jsonify({"reply": reply})
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
-
+    app.run(debug=True)
